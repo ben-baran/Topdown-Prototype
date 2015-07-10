@@ -1,0 +1,35 @@
+properties:
+{
+	top:0,
+	left:0,
+	sizeX:1000,
+	sizeY:1000,
+	background:[0.2386,0.1227,0.1075,1.0]
+},
+objects:
+{
+	Player/player:
+	{
+		shader:
+		{
+			name:uniformColor,
+			color:[0.5,0.5,0.9]
+		},
+		tags:[player,movable],
+		x:500,
+		y:500
+	},
+	Box/1:
+	{
+		shader:
+		{
+			name:uniformColor,
+			color:[1.0,1.0,1.0]
+		}
+		x:100,
+		y:100,
+		sizeX:100,
+		sizeY:100,
+		tags:[wall]
+	}
+}
