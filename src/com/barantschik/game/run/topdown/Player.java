@@ -8,7 +8,7 @@ import org.newdawn.slick.Color;
 
 import com.barantschik.game.anim.AnimD;
 import com.barantschik.game.anim.ConstAnim;
-import com.barantschik.game.anim.SinAnim;
+import com.barantschik.game.anim.CyclicChaseAnim;
 import com.barantschik.game.anim.SpringAnim;
 import com.barantschik.game.draw.Box;
 import com.barantschik.game.draw.GUtil;
@@ -19,11 +19,15 @@ import com.barantschik.game.physics.Physics;
 import com.barantschik.game.run.Scene;
 import com.barantschik.game.run.SceneObject;
 import com.barantschik.game.util.KeyHandler;
+import com.barantschik.game.util.MouseHandler;
 import com.barantschik.game.util.VecOp;
 
 public class Player extends Box
 {
 	private static final double PLAYER_SIZE_X = 45, PLAYER_SIZE_Y = 60;
+	
+	private static final int MOVE_DIR_MOVEMENT_BASED = 0, MOVE_DIR_CLICK_WAIT = 1, MOVE_DIR_CLICK_SPRING = 2, MOVE_DIR_DEP = 3;
+	private static final int MOVE_DIR_TYPE = MOVE_DIR_CLICK_WAIT;
 	
 	private double speedX, speedY;
 	private double[] v1 = new double[2], v2 = new double[2];
@@ -31,6 +35,7 @@ public class Player extends Box
 	private Map<String, LogMessage> messages = new HashMap<String, LogMessage>();
 	private double numBullets = 0;
 	private AnimD scaleX = new AnimD(1), scaleY = new AnimD(1);
+	private AnimD controllerTheta = new AnimD(0);
 	
 	public Player(double centerX, double centerY)
 	{
@@ -71,6 +76,8 @@ public class Player extends Box
 		GUtil.getCamera().getSizeX().add(new SpringAnim(scaleX, new AnimD(0.4), new AnimD(0.1)));
 		GUtil.getCamera().getSizeY().add(new SpringAnim(scaleY, new AnimD(0.4), new AnimD(0.1)));
 //		GUtil.getCamera().getTheta().add(new SinAnim(0, 0.05, 0.015));
+		
+		if(MOVE_DIR_TYPE == MOVE_DIR_DEP) getTheta().add(new CyclicChaseAnim(controllerTheta, 2 * Math.PI));
 	}
 	
 	private void createBullet()
@@ -80,6 +87,7 @@ public class Player extends Box
 		Scene.put("bullet #" + (++numBullets), b);
 	}
 	
+	@SuppressWarnings("unused")
 	public void update()
 	{
 		if(KeyHandler.pressed(Keyboard.KEY_SPACE)) createBullet();
@@ -133,8 +141,32 @@ public class Player extends Box
 			speed = maxSpeed;
 		}
 		
-		double[] relativeMouseCoords = GUtil.getCamera().mouseFromCenter();
-		getTheta().set(Math.atan2(relativeMouseCoords[1], relativeMouseCoords[0]) + GUtil.getCamera().getTheta().get());
+		if(MOVE_DIR_TYPE != MOVE_DIR_DEP)
+		{
+			if(!MouseHandler.has(0))
+			{				
+				double[] relativeMouseCoords = GUtil.getCamera().mouseFromCenter();
+				getTheta().set(Math.atan2(relativeMouseCoords[1], relativeMouseCoords[0]) + GUtil.getCamera().getTheta().get());			
+			}
+		}
+		else
+		{
+			boolean w = KeyHandler.has(Keyboard.KEY_W), a = KeyHandler.has(Keyboard.KEY_A),
+					s = KeyHandler.has(Keyboard.KEY_S), d = KeyHandler.has(Keyboard.KEY_D);
+			
+			if(w && !s && a == d)
+			{
+				controllerTheta.set(3 * Math.PI / 2);
+			}
+			else if(s && !w && a == d)
+			{
+				controllerTheta.set(Math.PI / 2);
+			}
+			else
+			{
+				controllerTheta.set(getTheta().get());
+			}
+		}
 		
 		getCenterX().adjust(speedX);
 		getCenterY().adjust(speedY);
