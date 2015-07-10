@@ -26,8 +26,8 @@ public class Player extends Box
 {
 	private static final double PLAYER_SIZE_X = 45, PLAYER_SIZE_Y = 60;
 	
-	private static final int MOVE_DIR_MOVEMENT_BASED = 0, MOVE_DIR_CLICK_WAIT = 1, MOVE_DIR_CLICK_SPRING = 2, MOVE_DIR_DEP = 3;
-	private static final int MOVE_DIR_TYPE = MOVE_DIR_CLICK_WAIT;
+	private static final int MOVE_DIR_MOVEMENT_BASED = 0, MOVE_DIR_CLICK_WAIT = 1, MOVE_DIR_DEP = 2;
+	private static final int MOVE_DIR_TYPE = MOVE_DIR_DEP;
 	
 	private double speedX, speedY;
 	private double[] v1 = new double[2], v2 = new double[2];
@@ -77,7 +77,7 @@ public class Player extends Box
 		GUtil.getCamera().getSizeY().add(new SpringAnim(scaleY, new AnimD(0.4), new AnimD(0.1)));
 //		GUtil.getCamera().getTheta().add(new SinAnim(0, 0.05, 0.015));
 		
-		if(MOVE_DIR_TYPE == MOVE_DIR_DEP) getTheta().add(new CyclicChaseAnim(controllerTheta, 2 * Math.PI));
+		if(MOVE_DIR_TYPE == MOVE_DIR_DEP) getTheta().add(new CyclicChaseAnim(controllerTheta, new AnimD(0.2), 2 * Math.PI));
 	}
 	
 	private void createBullet()
@@ -156,11 +156,35 @@ public class Player extends Box
 			
 			if(w && !s && a == d)
 			{
-				controllerTheta.set(3 * Math.PI / 2);
+				controllerTheta.set(Math.PI / 2);
 			}
 			else if(s && !w && a == d)
 			{
-				controllerTheta.set(Math.PI / 2);
+				controllerTheta.set(3 * Math.PI / 2);
+			}
+			else if(a && !d && w == s)
+			{
+				controllerTheta.set(Math.PI);
+			}
+			else if(d && !a && w == s)
+			{
+				controllerTheta.set(0);
+			}
+			else if(w && a && !s && !d)
+			{
+				controllerTheta.set(3 * Math.PI / 4);
+			}
+			else if(a && s && !d && !w)
+			{
+				controllerTheta.set(5 * Math.PI / 4);
+			}
+			else if(s && d && !w && !a)
+			{
+				controllerTheta.set(7 * Math.PI / 4);
+			}
+			else if(d && w && !a && !s)
+			{
+				controllerTheta.set(Math.PI / 4);
 			}
 			else
 			{

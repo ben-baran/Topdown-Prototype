@@ -2,18 +2,19 @@ package com.barantschik.game.anim;
 
 public class CyclicChaseAnim extends AnimFunc
 {
-	private AnimD origin;
+	private AnimD origin, stiffness;
 	private final double cycleSize;
 	private double val;
 	
-	public CyclicChaseAnim(double origin, double cycleSize)
+	public CyclicChaseAnim(double origin, double cycleSize, double stiffness)
 	{
-		this(new AnimD(origin), cycleSize);
+		this(new AnimD(origin), new AnimD(stiffness), cycleSize);
 	}
 	
-	public CyclicChaseAnim(AnimD origin, double cycleSize)
+	public CyclicChaseAnim(AnimD origin, AnimD stiffness, double cycleSize)
 	{
 		this.origin = origin;
+		this.stiffness = stiffness;
 		this.cycleSize = cycleSize;
 		val = origin.get();
 	}
@@ -21,10 +22,13 @@ public class CyclicChaseAnim extends AnimFunc
 	public void update(double dt)
 	{
 		origin.update();
+		stiffness.update();
 		
-		double dif = origin.get() - val, absDif = Math.abs(dif);
-		if(absDif < cycleSize / 2) val -= Math.signum(dif) * Math.log(1 + absDif);
-		else val += Math.signum(dif) * Math.log(1 + absDif);
+		double originD = origin.get();
+		if(val - originD > cycleSize / 2) originD += cycleSize;
+		else if(originD - val > cycleSize / 2) originD -= cycleSize;
+		
+		val += stiffness.get() * (originD - val);
 	}
 
 	public double output()
@@ -44,6 +48,6 @@ public class CyclicChaseAnim extends AnimFunc
 
 	public AnimD[] getDependencies()
 	{
-		return new AnimD[]{origin};
+		return new AnimD[]{origin, stiffness};
 	}
 }
