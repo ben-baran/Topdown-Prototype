@@ -1,6 +1,8 @@
 package com.barantschik.game.run.topdown;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.barantschik.game.anim.AnimD;
 import com.barantschik.game.draw.GUtil;
@@ -19,12 +21,20 @@ public class GestureTracker extends SceneObject
 	private static double MIN_LINE_LENGTH = 100, MAX_ERROR_LINE = 25;
 	
 	private double[] lastPoint = {Double.NaN, Double.NaN};
+	private long gestureBegin = 0;
 	private ArrayList<double[]> points = new ArrayList<double[]>();
 	private Shader redShader = new Shader("uniformColor");
+	
+	private Queue<GestureType> gestures = new LinkedList<GestureType>();
 	
 	public GestureTracker()
 	{
 		redShader.setUniformf(redShader.getUniformLoc("color"), 1.0f, 0.5f, 0.5f);
+	}
+	
+	public Queue<GestureType> getGestures()
+	{
+		return gestures;
 	}
 	
 	public void update()
@@ -32,6 +42,7 @@ public class GestureTracker extends SceneObject
 		if(MouseHandler.has(0))
 		{
 			double[] newPoints = GUtil.getCamera().mouseOnScreen();
+			if(points.size() == 0) gestureBegin = System.currentTimeMillis();
 			if(Double.isNaN(lastPoint[0]) || VecOp.magnitude(new double[]{newPoints[0] - lastPoint[0], newPoints[1] - lastPoint[1]}) > MIN_SAMPLE_DIFFERENCE)	
 			{
 				points.add(newPoints);
@@ -49,18 +60,29 @@ public class GestureTracker extends SceneObject
 				if(points.size() <= MAX_SAMPLES_POINT && distance < MAX_DISTANCE_POINT)
 				{
 					Logger.log("It's a point");
+					gestures.add(new PointGesture(System.currentTimeMillis() - gestureBegin));
 				}
 				else if(distance > MIN_LINE_LENGTH && points.size() <= MAX_SAMPLES_CHECK_LINE)
 				{	
 					boolean good = true;
-					for(double[] point : points) if(Math.abs(dy * point[0]  -dx * point[1] + term) / distance > MAX_ERROR_LINE)
+					double inaccuracy = 0;
+					for(double[] point : points)
 					{
-						good = false;
-						Logger.log("Not a line: " + Math.abs(dy * point[0]  -dx * point[1] + term) / distance);
-						break;
+						double pointLineDistance = Math.abs(dy * point[0] - dx * point[1] + term) / distance;
+						if(pointLineDistance > MAX_ERROR_LINE)
+						{							
+							good = false;
+							Logger.log("Not a line: " + pointLineDistance);
+							break;
+						}
+						else inaccuracy += pointLineDistance;
 					}
 					
-					if(good) Logger.log("It's a line");
+					if(good)
+					{
+						Logger.log("It's a line");
+						gestures.add(new LineGesture(System.currentTimeMillis() - gestureBegin, inaccuracy));
+					}
 				}
 			}
 			

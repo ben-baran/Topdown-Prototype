@@ -3,14 +3,15 @@ package com.barantschik.game.run.topdown;
 import com.barantschik.game.draw.Box;
 import com.barantschik.game.run.Scene;
 
-public class PointGesture extends GestureType
+public class LineGesture extends GestureType
 {
 	private long duration;
-	private double theta;
+	private double theta, inaccuracy;
 	
-	public PointGesture(long duration)
+	public LineGesture(long duration, double inaccuracy)
 	{
 		setDuration(duration);
+		setInaccuracy(inaccuracy);
 		setTheta(((Box) Scene.get("player")).getTheta().get());
 	}
 
@@ -32,5 +33,15 @@ public class PointGesture extends GestureType
 	public void setTheta(double theta)
 	{
 		this.theta = theta;
+	}
+
+	public double getInaccuracy()
+	{
+		return inaccuracy;
+	}
+
+	public void setInaccuracy(double inaccuracy)
+	{
+		this.inaccuracy = inaccuracy;
 	}
 }
