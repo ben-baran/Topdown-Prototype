@@ -8,7 +8,7 @@ import java.util.Set;
 public class AnimD
 {
 	private static DecimalFormat formatter = new DecimalFormat("#.##");
-	private double val, accum, sum;
+	protected double val, accum, sum;
 	private Set<AnimFunc> functions = new HashSet<AnimFunc>();
 	
 	public AnimD(double val)

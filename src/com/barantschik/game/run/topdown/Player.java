@@ -27,7 +27,7 @@ public class Player extends Box
 	private static final double PLAYER_SIZE_X = 45, PLAYER_SIZE_Y = 60;
 	
 	private static final int MOVE_DIR_MOVEMENT_BASED = 0, MOVE_DIR_CLICK_WAIT = 1, MOVE_DIR_DEP = 2;
-	private static final int MOVE_DIR_TYPE = MOVE_DIR_DEP;
+	private static final int MOVE_DIR_TYPE = MOVE_DIR_CLICK_WAIT;
 	
 	private double speedX, speedY;
 	private double[] v1 = new double[2], v2 = new double[2];

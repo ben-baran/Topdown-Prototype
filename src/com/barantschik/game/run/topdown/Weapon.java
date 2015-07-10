@@ -59,9 +59,9 @@ public class Weapon extends Box
 				if(gesture instanceof PointGesture)
 				{
 					Logger.log("Start point attack");
-					getTheta().add(new EaseAnim(0, 20, 1.6));
-					getCenterX().add(new EaseAnim(0, 20, -140 * v2[0]));
-					getCenterY().add(new EaseAnim(0, 20, -140 * v2[1]));
+					getTheta().add(new EaseAnim(0, 20, 1.6, EaseAnim.EaseType.CUBIC_IN_OUT));
+					getCenterX().add(new EaseAnim(0, 20, -140 * v2[0], EaseAnim.EaseType.CUBIC_IN_OUT));
+					getCenterY().add(new EaseAnim(0, 20, -140 * v2[1], EaseAnim.EaseType.CUBIC_IN_OUT));
 				}
 				else if(gesture instanceof LineGesture)
 				{
