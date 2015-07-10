@@ -18,7 +18,7 @@ public class GestureTracker extends SceneObject
 	private static double MAX_DISTANCE_POINT = 30;
 	private static int MAX_SAMPLES_POINT = 6;
 	private static int MAX_SAMPLES_CHECK_LINE = 60;
-	private static double MIN_LINE_LENGTH = 100, MAX_ERROR_LINE = 25;
+	private static double MIN_LINE_LENGTH = 100, MAX_ERROR_LINE = 40;
 	
 	private double[] lastPoint = {Double.NaN, Double.NaN};
 	private long gestureBegin = 0;
