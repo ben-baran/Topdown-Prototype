@@ -59,7 +59,6 @@ public class GestureTracker extends SceneObject
 				
 				if(points.size() <= MAX_SAMPLES_POINT && distance < MAX_DISTANCE_POINT)
 				{
-					Logger.log("It's a point");
 					gestures.add(new PointGesture(System.currentTimeMillis() - gestureBegin));
 				}
 				else if(distance > MIN_LINE_LENGTH && points.size() <= MAX_SAMPLES_CHECK_LINE)
@@ -72,7 +71,6 @@ public class GestureTracker extends SceneObject
 						if(pointLineDistance > MAX_ERROR_LINE)
 						{							
 							good = false;
-							Logger.log("Not a line: " + pointLineDistance);
 							break;
 						}
 						else inaccuracy += pointLineDistance;
@@ -80,7 +78,6 @@ public class GestureTracker extends SceneObject
 					
 					if(good)
 					{
-						Logger.log("It's a line");
 						gestures.add(new LineGesture(System.currentTimeMillis() - gestureBegin, inaccuracy));
 					}
 				}

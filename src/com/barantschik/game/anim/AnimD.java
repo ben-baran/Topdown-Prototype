@@ -1,4 +1,4 @@
- package com.barantschik.game.anim;
+package com.barantschik.game.anim;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;
